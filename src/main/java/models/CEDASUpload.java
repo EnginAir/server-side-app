@@ -10,50 +10,14 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package importers;
+package models;
 
-import dev.morphia.Datastore;
-import models.ADSBData;
+public class CEDASUpload {
+    String tailNumber;
+    LatLong uploadPoint;
 
-import java.io.FileInputStream;
-import java.util.HashMap;
-
-public class ADSBImporter extends Importer {
-    public ADSBImporter(HashMap<String, String> config, Datastore connection) {
-        super(config, connection);
-    }
-
-    public boolean execute() {
-        //TODO
-        return false;
-    }
-
-    class ADSBDownloader {
-        ADSBData[] filter(ADSBData[] data) {
-            //TODO
-            return null;
-        }
-
-        boolean download() {
-            //TODO
-            return false;
-        }
-
-        boolean extract() {
-            //TODO
-            return false;
-        }
-
-        public ADSBData[] parse() {
-            //TODO
-            return null;
-        }
-
-        ADSBData[] parseSegment(FileInputStream f) {
-            //TODO
-            return null;
-        }
-
-
+    public CEDASUpload(String tailNumber, LatLong uploadPoint){
+        this.tailNumber = tailNumber;
+        this.uploadPoint = uploadPoint;
     }
 }

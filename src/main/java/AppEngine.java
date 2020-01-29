@@ -16,7 +16,7 @@ public class AppEngine {
 
     private Executor executor;
 
-    public static void main() {
+    public static void main(String[] args) {
         AppEngine ae = new AppEngine();
     }
 }
