@@ -14,10 +14,6 @@ package executors;
 
 import java.util.HashMap;
 
-/**
- * Created by ianot on 1/28/2020. None of this software may be reproduced without
- * the express written permission of PlaygroundMC.
- */
 public abstract class Executor {
     private HashMap<String, String> config;
     public Executor(HashMap<String, String> config) {

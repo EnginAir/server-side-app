@@ -12,10 +12,6 @@
 
 import executors.Executor;
 
-/**
- * Created by ianot on 1/28/2020. None of this software may be reproduced without
- * the express written permission of PlaygroundMC.
- */
 public class AppEngine {
 
     private Executor executor;

@@ -13,14 +13,9 @@
 package executors;
 
 import dev.morphia.Datastore;
-import dev.morphia.Morphia;
 
 import java.util.HashMap;
 
-/**
- * Created by ianot on 1/28/2020. None of this software may be reproduced without
- * the express written permission of PlaygroundMC.
- */
 public class ImportExecutor extends Executor {
     public ImportExecutor(HashMap<String, String> config) {
         super(config);
