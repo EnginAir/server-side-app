@@ -14,6 +14,7 @@ package importers;
 
 import dev.morphia.Datastore;
 
+import java.io.FileInputStream;
 import java.util.HashMap;
 
 public class ADSBImporter extends Importer {
@@ -24,5 +25,32 @@ public class ADSBImporter extends Importer {
     public boolean execute() {
         //TODO
         return false;
+    }
+
+    class ADSBDownloader {
+        ADSBData[] filter(ADSBData[] data) {
+            //TODO
+            return null;
+        }
+
+        boolean download() {
+            //TODO
+            return false;
+        }
+
+        boolean extract() {
+            //TODO
+            return false;
+        }
+
+        public ADSBData[] parse() {
+            //TODO
+            return null;
+        }
+
+        ADSBData[] parseSegment(FileInputStream f) {
+            //TODO
+            return null;
+        }
     }
 }
