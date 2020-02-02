@@ -11,12 +11,53 @@
  */
 
 import executors.Executor;
+import executors.ImportExecutor;
+import org.apache.commons.cli.*;
+
+import java.util.HashMap;
 
 public class AppEngine {
 
     private Executor executor;
 
-    public static void main() {
+    public static void main(String[] args) {
         AppEngine ae = new AppEngine();
+        HashMap<String, String> parsedArgs = ae.parseArgs(args);
     }
+
+
+    private HashMap<String, String> parseArgs(String[] args){
+
+        HashMap<String, String> parsedAgrs = new HashMap<>();
+
+        // command line inputs for shit
+        final Options options = new Options();
+        options.addOption(new Option("t", "importTails", true, "imports tails from tails.xlsx"));
+        options.addOption(new Option("a", "importADSB", true, "imports data from ADSB"));
+        options.addOption(new Option("c", "importCEDAS", true, "Imports CEDAS Upload info"));
+        options.addOption(new Option("d", "dataBaseName", true, "Name of Mongo Database to Import to"));
+
+
+
+        // create the parser
+        CommandLineParser parser = new DefaultParser();
+        try {
+            // parse the command line arguments and add to hashmap.
+            for(Option option : parser.parse( options, args ).getOptions()) {
+                parsedAgrs.put(option.getOpt(), option.getValue());
+            }
+;        }
+        catch( ParseException exp ) {
+            // oops, something went wrong
+            System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
+        }
+
+        return parsedAgrs;
+    }
+
+    private Executor selectExecutor(HashMap<String, String> parsedArgs){
+
+        return null;
+    }
+
 }

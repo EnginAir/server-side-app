@@ -12,7 +12,9 @@
 
 package executors;
 
+import com.mongodb.MongoClient;
 import dev.morphia.Datastore;
+import dev.morphia.Morphia;
 
 import java.util.HashMap;
 
@@ -26,8 +28,11 @@ public class ImportExecutor extends Executor {
         return false;
     }
 
-    private Datastore makeConnection() {
-        //TODO
-        return null;
+    private Datastore makeConnection(String dbName) {
+
+        final Morphia morphia = new Morphia();
+        final Datastore datastore = morphia.createDatastore(new MongoClient(), dbName);
+
+        return datastore;
     }
 }

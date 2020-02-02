@@ -12,6 +12,7 @@
 
 package importers;
 
+import Models.ADSBData;
 import dev.morphia.Datastore;
 
 import java.io.FileInputStream;
