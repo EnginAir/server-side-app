@@ -22,6 +22,7 @@ public class AppEngine {
 
         AppEngine ae = new AppEngine();
         HashMap<String, String> parsedArgs = parseArgs(args);
+        ae.execute(parsedArgs);
 
     }
 
