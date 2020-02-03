@@ -13,8 +13,8 @@
 package models;
 
 public class CEDASUpload {
-    String tailNumber;
-    LatLong uploadPoint;
+    private String tailNumber;
+    private LatLong uploadPoint;
 
     public CEDASUpload(String tailNumber, LatLong uploadPoint){
         this.tailNumber = tailNumber;

@@ -10,7 +10,6 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import executors.Executor;
 import executors.ImportExecutor;
 import org.apache.commons.cli.*;
 
@@ -18,15 +17,16 @@ import java.util.HashMap;
 
 public class AppEngine {
 
-    private Executor executor;
 
     public static void main(String[] args) {
+
         AppEngine ae = new AppEngine();
-        HashMap<String, String> parsedArgs = ae.parseArgs(args);
+        HashMap<String, String> parsedArgs = parseArgs(args);
+
     }
 
 
-    private HashMap<String, String> parseArgs(String[] args){
+    private static HashMap<String, String> parseArgs(String[] args){
 
         HashMap<String, String> parsedAgrs = new HashMap<>();
 
@@ -46,7 +46,7 @@ public class AppEngine {
             for(Option option : parser.parse( options, args ).getOptions()) {
                 parsedAgrs.put(option.getOpt(), option.getValue());
             }
-;        }
+        }
         catch( ParseException exp ) {
             // oops, something went wrong
             System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
@@ -55,9 +55,12 @@ public class AppEngine {
         return parsedAgrs;
     }
 
-    private Executor selectExecutor(HashMap<String, String> parsedArgs){
+    private boolean execute(HashMap<String, String> parsedArgs){
 
-        return null;
+        ImportExecutor importExecutor = new ImportExecutor(parsedArgs);
+
+        return importExecutor.execute();
     }
+
 
 }

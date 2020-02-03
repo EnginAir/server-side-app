@@ -14,15 +14,15 @@ package models;
 
 public class ADSBData {
 
-    String tailNumber;
-    LatLong location;
-    Float altitude;
-    Float speed;
+    private String tailNumber;
+    private LatLong location;
+    private Float altitude;
+    private Float speed;
 
 
     public ADSBData(String tailNumber, LatLong location, Float altitude, Float speed){
         this.tailNumber = tailNumber;
-        this. location = location;
+        this.location = location;
         this.altitude = altitude;
         this.speed = speed;
     }

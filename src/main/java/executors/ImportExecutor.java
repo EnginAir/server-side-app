@@ -15,24 +15,60 @@ package executors;
 import com.mongodb.MongoClient;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
+import importers.ADSBImporter;
+import importers.CEDASImporter;
+import importers.Importer;
+import importers.TailImporter;
 
 import java.util.HashMap;
 
-public class ImportExecutor extends Executor {
+public class ImportExecutor {
+
+    private HashMap<String, String> config;
+
     public ImportExecutor(HashMap<String, String> config) {
-        super(config);
+        this.config = config;
     }
 
     public boolean execute() {
-        //TODO
-        return false;
+
+        try{
+            Datastore dataStore = makeConnection(config.get("d"));
+
+            for(String arg : config.keySet()){
+                Importer importer = getImporter(config.get(arg), dataStore);
+                if(importer != null){
+                    importer.execute();
+                }
+            }
+            return true;
+        }
+
+        catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private Importer getImporter(String arg, Datastore datastore){
+
+        if(arg.equals("c")){
+            return new CEDASImporter(config, datastore);
+        }
+        if(arg.equals("a")){
+            return new ADSBImporter(config, datastore);
+        }
+        if(arg.equals("t")){
+            return new TailImporter(config, datastore);
+        }
+
+        return null;
     }
 
     private Datastore makeConnection(String dbName) {
 
         final Morphia morphia = new Morphia();
-        final Datastore datastore = morphia.createDatastore(new MongoClient(), dbName);
 
-        return datastore;
+        return morphia.createDatastore(new MongoClient(), dbName);
     }
 }

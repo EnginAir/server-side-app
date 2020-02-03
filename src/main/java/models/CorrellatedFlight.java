@@ -13,8 +13,8 @@
 package models;
 
 public class CorrellatedFlight {
-    String tailNumber;
-    LatLong landingPoint;
+    private String tailNumber;
+    private LatLong landingPoint;
 
     public CorrellatedFlight(String tailNumber, LatLong landingPoint){
 
