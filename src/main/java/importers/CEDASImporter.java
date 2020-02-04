@@ -52,7 +52,6 @@ public class CEDASImporter extends Importer {
     private boolean executeEXCEL() throws IOException {
         List<CEDASUpload> cedatas = new ArrayList<>();
 
-        //System.out.println(config.get("importCEDAS"));
         FileInputStream fileInput = new FileInputStream(new File(config.get("importCEDAS")));
         XSSFWorkbook wb = new XSSFWorkbook(fileInput);
         XSSFSheet sheet = wb.getSheetAt(0);
@@ -105,10 +104,7 @@ public class CEDASImporter extends Importer {
                 cedasData = gson.fromJson(reader, CEDASUpload[].class);
             }
             else{
-                cedasData = new CEDASUpload[cedasUploads.size()];
-                for(int i = 0; i < cedasUploads.size(); i++){
-                    cedasData[i] = cedasUploads.get(i);
-                }
+                cedasData = cedasUploads.toArray(new CEDASUpload[]{});
             }
 
             connection.ensureIndexes();
