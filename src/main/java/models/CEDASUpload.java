@@ -13,11 +13,35 @@
 package models;
 
 public class CEDASUpload {
-    private String tailNumber;
-    private LatLong uploadPoint;
 
-    public CEDASUpload(String tailNumber, LatLong uploadPoint){
+//    Engine rolldown GPS location
+//    Engine rolldown time/date
+//    Engine start GPS location
+//    Engine start time/date
+//    Upload GPS location (assumed to be half way between rolldown and start location)
+//    WAP signal strength
+//    WAP ID
+//    Airport Code
+
+    String tailNumber;
+    LatLong rolldown;
+    String rolldownTimeDate;
+    LatLong startUp;
+    String startUpTimeDate;
+    LatLong uploadLocation;
+    String wapStrength;
+    String wapID;
+    String airportCode;
+
+    public CEDASUpload(String tailNumber, LatLong rolldown, String rolldownTimeDate, LatLong startUp, String startUpTimeDate, LatLong uploadLocation, String wapStrength, String wapID, String airportCode){
         this.tailNumber = tailNumber;
-        this.uploadPoint = uploadPoint;
+        this.rolldown = rolldown;
+        this.rolldownTimeDate = rolldownTimeDate;
+        this.startUp = startUp;
+        this.startUpTimeDate = startUpTimeDate;
+        this.uploadLocation = uploadLocation;
+        this.wapStrength = wapStrength;
+        this.wapID = wapID;
+        this.airportCode = airportCode;
     }
 }

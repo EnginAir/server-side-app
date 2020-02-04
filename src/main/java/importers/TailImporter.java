@@ -12,8 +12,10 @@
 
 package importers;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import dev.morphia.Datastore;
-import models.tailNumber;
+import models.TailNumber;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -21,7 +23,9 @@ import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class TailImporter extends Importer {
     public TailImporter(HashMap<String, String> config, Datastore connection) {
@@ -30,20 +34,14 @@ public class TailImporter extends Importer {
 
     public boolean execute() throws IOException, ParseException {
 
-        //JSON parser object to parse read file
-        JSONParser jsonParser = new JSONParser();
-
-        try(FileReader reader = new FileReader(config.get("t"))){
-            //Read JSON file
-            Object obj = jsonParser.parse(reader);
-
-            JSONArray tails = (JSONArray) obj;
+        try{
+            Gson gson = new Gson();
+            JsonReader reader = new JsonReader(new FileReader(config.get("importTails")));
+            TailNumber[] tailNumbers = gson.fromJson(reader, TailNumber[].class);
 
             connection.ensureIndexes();
-            //Iterate over tail array
-            for(Object tail : tails){
-                JSONObject jsonTail = (JSONObject) tail;
-                connection.save(new tailNumber((String) jsonTail.get("tailNumber")));
+            for(TailNumber tn : tailNumbers){
+                connection.save(tn);
             }
 
         }

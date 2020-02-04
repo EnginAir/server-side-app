@@ -33,21 +33,18 @@ public class AppEngine {
 
         // command line inputs for shit
         final Options options = new Options();
-        options.addOption(new Option("t", "importTails", true, "imports tails from tails.xlsx"));
+        options.addOption(new Option("t", "importTails", true, "imports tails from tails.json"));
         options.addOption(new Option("a", "importADSB", true, "imports data from ADSB"));
         options.addOption(new Option("c", "importCEDAS", true, "Imports CEDAS Upload info"));
         options.addOption(new Option("d", "dataBaseName", true, "Name of Mongo Database to Import to"));
-        options.addOption(new Option("r", "dataBaseName", false, "run corrector"));
-
-
-
+        options.addOption(new Option("C", "runCorrelator", false, "run corellator"));
 
         // create the parser
         CommandLineParser parser = new DefaultParser();
         try {
             // parse the command line arguments and add to hashmap.
             for(Option option : parser.parse( options, args ).getOptions()) {
-                parsedAgrs.put(option.getOpt(), option.getValue());
+                parsedAgrs.put(option.getLongOpt(), option.getValue());
             }
         }
         catch( ParseException exp ) {

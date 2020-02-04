@@ -1,0 +1,22 @@
+[
+  {
+    "tailNumber": "E392TLS",
+    "rolldown": {
+      "latitude": "-12938292.2192",
+      "longitude": "390290.21929"
+    },
+    "rolldownTimeDate": "10-29-2004",
+    "starUp": {
+      "latitude": "293828",
+      "longitude": "-1293994"
+    },
+    "startUpTimeDate": "10-30-2004",
+    "uploadLocation": {
+      "latitude": "-2923994.23",
+      "longitude": "392093.329"
+    },
+    "wapStrength": "2.3",
+    "wapID": "PhxAZNoPasswordSecure",
+    "airportCode": "phx"
+  }
+]

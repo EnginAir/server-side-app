@@ -1,10 +1,10 @@
 package models;
 
-public class tailNumber {
+public class TailNumber {
 
     String tailNumber;
 
-    public tailNumber(String tailNumber){
+    public TailNumber(String tailNumber){
         this.tailNumber = tailNumber;
     }
 }

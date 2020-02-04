@@ -34,7 +34,7 @@ public class ImportExecutor {
     public boolean execute() {
 
         try{
-            Datastore dataStore = makeConnection(config.get("d"));
+            Datastore dataStore = makeConnection(config.get("dataBaseName"));
 
             for(Map.Entry<String, String> arg : config.entrySet()){
 
@@ -55,13 +55,13 @@ public class ImportExecutor {
 
     private Importer getImporter(String arg, Datastore datastore){
 
-        if(arg.equals("c")){
+        if(arg.equals("importCEDAS")){
             return new CEDASImporter(config, datastore);
         }
-        if(arg.equals("a")){
+        if(arg.equals("importADSB")){
             return new ADSBImporter(config, datastore);
         }
-        if(arg.equals("t")){
+        if(arg.equals("importTails")){
             return new TailImporter(config, datastore);
         }
 
