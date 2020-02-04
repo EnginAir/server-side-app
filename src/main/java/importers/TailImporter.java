@@ -13,7 +13,14 @@
 package importers;
 
 import dev.morphia.Datastore;
+import models.tailNumber;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class TailImporter extends Importer {
@@ -21,8 +28,30 @@ public class TailImporter extends Importer {
         super(config, connection);
     }
 
-    public boolean execute() {
-        //TODO
-        return false;
+    public boolean execute() throws IOException, ParseException {
+
+        //JSON parser object to parse read file
+        JSONParser jsonParser = new JSONParser();
+
+        try(FileReader reader = new FileReader(config.get("t"))){
+            //Read JSON file
+            Object obj = jsonParser.parse(reader);
+
+            JSONArray tails = (JSONArray) obj;
+
+            connection.ensureIndexes();
+            //Iterate over tail array
+            for(Object tail : tails){
+                JSONObject jsonTail = (JSONObject) tail;
+                connection.save(new tailNumber((String) jsonTail.get("tailNumber")));
+            }
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 }

@@ -37,6 +37,8 @@ public class AppEngine {
         options.addOption(new Option("a", "importADSB", true, "imports data from ADSB"));
         options.addOption(new Option("c", "importCEDAS", true, "Imports CEDAS Upload info"));
         options.addOption(new Option("d", "dataBaseName", true, "Name of Mongo Database to Import to"));
+        options.addOption(new Option("r", "dataBaseName", false, "run corrector"));
+
 
 
 

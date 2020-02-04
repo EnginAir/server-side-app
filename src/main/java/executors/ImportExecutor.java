@@ -21,6 +21,7 @@ import importers.Importer;
 import importers.TailImporter;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class ImportExecutor {
 
@@ -35,11 +36,13 @@ public class ImportExecutor {
         try{
             Datastore dataStore = makeConnection(config.get("d"));
 
-            for(String arg : config.keySet()){
-                Importer importer = getImporter(config.get(arg), dataStore);
+            for(Map.Entry<String, String> arg : config.entrySet()){
+
+                Importer importer = getImporter(arg.getKey(), dataStore);
                 if(importer != null){
                     importer.execute();
                 }
+
             }
             return true;
         }
@@ -68,7 +71,7 @@ public class ImportExecutor {
     private Datastore makeConnection(String dbName) {
 
         final Morphia morphia = new Morphia();
-
+        morphia.mapPackage("models");
         return morphia.createDatastore(new MongoClient(), dbName);
     }
 }

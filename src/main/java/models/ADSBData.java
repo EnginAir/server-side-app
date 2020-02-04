@@ -14,10 +14,10 @@ package models;
 
 public class ADSBData {
 
-    private String tailNumber;
-    private LatLong location;
-    private Float altitude;
-    private Float speed;
+    String tailNumber;
+    LatLong location;
+    Float altitude;
+    Float speed;
 
 
     public ADSBData(String tailNumber, LatLong location, Float altitude, Float speed){

@@ -14,7 +14,6 @@ package importers;
 
 import models.ADSBData;
 import dev.morphia.Datastore;
-import models.ADSBData;
 
 import java.io.FileInputStream;
 import java.util.HashMap;

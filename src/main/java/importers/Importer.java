@@ -13,16 +13,19 @@
 package importers;
 
 import dev.morphia.Datastore;
+import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 public abstract class Importer {
-    private Datastore connection;
-    private HashMap<String, String> config;
+    Datastore connection;
+    HashMap<String, String> config;
+
     public Importer(HashMap<String, String> config, Datastore connection) {
         this.config = config;
         this.connection = connection;
     }
 
-    public abstract boolean execute();
+    public abstract boolean execute() throws IOException, ParseException;
 }
