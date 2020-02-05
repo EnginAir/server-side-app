@@ -13,8 +13,8 @@
 package models;
 
 public class LatLong {
-    Float latitude;
-    Float longitude;
+    private Float latitude;
+    private Float longitude;
 
     public LatLong(Float latitude, Float longitude){
         this.latitude = latitude;

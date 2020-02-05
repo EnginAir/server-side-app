@@ -12,17 +12,44 @@
 
 package importers;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import dev.morphia.Datastore;
+import models.TailNumber;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class TailImporter extends Importer {
     public TailImporter(HashMap<String, String> config, Datastore connection) {
         super(config, connection);
     }
 
-    public boolean execute() {
-        //TODO
-        return false;
+    public boolean execute() throws IOException, ParseException {
+
+        try{
+            Gson gson = new Gson();
+            JsonReader reader = new JsonReader(new FileReader(config.get("importTails")));
+            TailNumber[] tailNumbers = gson.fromJson(reader, TailNumber[].class);
+
+            connection.ensureIndexes();
+            for(TailNumber tn : tailNumbers){
+                connection.save(tn);
+            }
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 }

@@ -15,24 +15,63 @@ package executors;
 import com.mongodb.MongoClient;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
+import importers.ADSBImporter;
+import importers.CEDASImporter;
+import importers.Importer;
+import importers.TailImporter;
 
 import java.util.HashMap;
+import java.util.Map;
 
-public class ImportExecutor extends Executor {
+public class ImportExecutor {
+
+    private HashMap<String, String> config;
+
     public ImportExecutor(HashMap<String, String> config) {
-        super(config);
+        this.config = config;
     }
 
     public boolean execute() {
-        //TODO
-        return false;
+
+        try{
+            Datastore dataStore = makeConnection(config.get("dataBaseName"));
+
+            for(Map.Entry<String, String> arg : config.entrySet()){
+
+                Importer importer = getImporter(arg.getKey(), dataStore);
+                if(importer != null){
+                    importer.execute();
+                }
+
+            }
+            return true;
+        }
+
+        catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private Importer getImporter(String arg, Datastore datastore){
+
+        if(arg.equals("importCEDAS")){
+            return new CEDASImporter(config, datastore);
+        }
+        if(arg.equals("importADSB")){
+            return new ADSBImporter(config, datastore);
+        }
+        if(arg.equals("importTails")){
+            return new TailImporter(config, datastore);
+        }
+
+        return null;
     }
 
     private Datastore makeConnection(String dbName) {
 
         final Morphia morphia = new Morphia();
-        final Datastore datastore = morphia.createDatastore(new MongoClient(), dbName);
-
-        return datastore;
+        morphia.mapPackage("models");
+        return morphia.createDatastore(new MongoClient(), dbName);
     }
 }

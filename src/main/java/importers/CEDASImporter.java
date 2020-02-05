@@ -12,18 +12,115 @@
 
 package importers;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonReader;
 import dev.morphia.Datastore;
+import models.CEDASUpload;
+import models.LatLong;
+import models.TailNumber;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.simple.JSONObject;
 
+import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class CEDASImporter extends Importer {
     public CEDASImporter(HashMap<String, String> config, Datastore connection) {
         super(config, connection);
     }
 
-    public boolean execute() {
-        //TODO
-        return false;
+    public boolean execute() throws IOException {
+
+        if(config.get("importCEDAS").toLowerCase().endsWith(".xlsx")){
+            return executeEXCEL();
+        }
+        else if(config.get("importCEDAS").toLowerCase().endsWith(".json")){
+            return executeJSON(true, null);
+        }
+        else {
+            return false;
+        }
     }
 
+    private boolean executeEXCEL() throws IOException {
+        List<CEDASUpload> cedatas = new ArrayList<>();
+
+        FileInputStream fileInput = new FileInputStream(new File(config.get("importCEDAS")));
+        XSSFWorkbook wb = new XSSFWorkbook(fileInput);
+        XSSFSheet sheet = wb.getSheetAt(0);
+        XSSFRow row;
+        XSSFCell cell;
+
+        int rows = sheet.getPhysicalNumberOfRows();
+        int cols = 0;
+        int tmp = 0;
+
+        for(int i = 0; i < 10 || i < rows; i++){
+            row = sheet.getRow(i);
+            if(row != null){
+                tmp = sheet.getRow(i).getPhysicalNumberOfCells();
+            }
+            if(tmp>cols){
+                cols = tmp;
+            }
+        }
+
+        for(int r = 1; r < rows; r++){
+            row = sheet.getRow(r);
+            if(row != null ){
+                if(row.getCell(0) != null && row.getCell(0).getCellType() != Cell.CELL_TYPE_BLANK){
+                    cedatas.add(new CEDASUpload(
+                            row.getCell(0).toString(),
+                            new LatLong(Float.parseFloat(row.getCell(1).toString()), Float.parseFloat(row.getCell(2).toString())),
+                            row.getCell(3).toString(),
+                            new LatLong(Float.parseFloat(row.getCell(4).toString()), Float.parseFloat(row.getCell(5).toString())),
+                            row.getCell(6).toString(),
+                            new LatLong(Float.parseFloat(row.getCell(7).toString()), Float.parseFloat(row.getCell(8).toString())),
+                            row.getCell(9).toString(),
+                            row.getCell(10).toString(),
+                            row.getCell(11).toString()));
+                }
+            }
+        }
+        return executeJSON(false, cedatas);
+    }
+
+
+    private boolean executeJSON(boolean isAlreadyJSON, List<CEDASUpload> cedasUploads) throws FileNotFoundException {
+
+        try{
+            CEDASUpload[] cedasData;
+
+            if(isAlreadyJSON){
+                Gson gson = new Gson();
+                JsonReader reader = new JsonReader(new FileReader(config.get("importCEDAS")));
+                cedasData = gson.fromJson(reader, CEDASUpload[].class);
+            }
+            else{
+                cedasData = cedasUploads.toArray(new CEDASUpload[]{});
+            }
+
+            connection.ensureIndexes();
+            for(CEDASUpload cu : cedasData){
+                connection.save(cu);
+            }
+
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
+
+        return true;
+    }
 }
+
+
