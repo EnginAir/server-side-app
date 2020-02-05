@@ -12,48 +12,164 @@
 
 package importers;
 
-import models.ADSBData;
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+import models.*;
 import dev.morphia.Datastore;
+import org.apache.commons.io.FileUtils;
 
-import java.io.FileInputStream;
-import java.util.HashMap;
+import java.io.*;
+import java.net.URL;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class ADSBImporter extends Importer {
     public ADSBImporter(HashMap<String, String> config, Datastore connection) {
         super(config, connection);
     }
 
-    public boolean execute() {
-        //TODO
-        return false;
+    public boolean execute() throws IOException {
+
+        ADSBDownloader adsb = new ADSBDownloader();
+        ADSBData[] adsbData = adsb.execute();
+        if(adsbData != null){
+            connection.ensureIndexes();
+            for(ADSBData ad : adsbData){
+                connection.save(ad);
+            }
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     class ADSBDownloader {
-        ADSBData[] filter(ADSBData[] data) {
-            //TODO
-            return null;
+
+        ADSBData[] execute() throws IOException {
+            List<ADSBData> dataList = new ArrayList<>();
+            download(true);
+            return parse();
         }
 
-        boolean download() {
-            //TODO
-            return false;
+        boolean download(boolean isTest) throws IOException {
+            if(isTest){
+                try{
+                    FileUtils.copyURLToFile(new URL("https://history.adsbexchange.com/downloads/samples/" + config.get("importADSB") + ".zip"), new File("./ADSBDownload/" + config.get("importADSB") + ".zip"), 10000, 10000);
+                    extract();
+                    return true;
+                }
+                catch(Exception e){
+                    return false;
+                }
+            }
+            else{
+               try{
+                    FileUtils.copyURLToFile(new URL("https://history.adsbexchange.com/Aircraftlist.json/" + config.get("importADSB") + ".zip"), new File("./ADSBDownload/" + config.get("importADSB") + ".zip"), 10000, 10000);
+                    extract();
+                    return true;
+               }
+               catch(Exception e){
+                   return false;
+               }
+            }
         }
 
         boolean extract() {
-            //TODO
-            return false;
+            try{
+                String zipFilePath = "./ADSBDownload/" + config.get("importADSB") + ".zip";
+                String destDir = "./ADSBDownload/" + config.get("importADSB");
+                unzip(zipFilePath, destDir);
+                return true;
+            }
+            catch(Exception e){
+                return false;
+            }
         }
 
-        public ADSBData[] parse() {
-            //TODO
-            return null;
+        private void unzip(String zipFilePath, String destDir) {
+            File dir = new File(destDir);
+            // create output directory if it doesn't exist
+            if(!dir.exists()) dir.mkdirs();
+            FileInputStream fis;
+            //buffer for read and write data to file
+            byte[] buffer = new byte[1024];
+            try {
+                fis = new FileInputStream(zipFilePath);
+                ZipInputStream zis = new ZipInputStream(fis);
+                ZipEntry ze = zis.getNextEntry();
+                while(ze != null){
+                    String fileName = ze.getName();
+                    File newFile = new File(destDir + File.separator + fileName);
+                    System.out.println("Unzipping to "+newFile.getAbsolutePath());
+                    //create directories for sub directories in zip
+                    new File(newFile.getParent()).mkdirs();
+                    FileOutputStream fos = new FileOutputStream(newFile);
+                    int len;
+                    while ((len = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, len);
+                    }
+                    fos.close();
+                    //close this ZipEntry
+                    zis.closeEntry();
+                    ze = zis.getNextEntry();
+                }
+                //close last ZipEntry
+                zis.closeEntry();
+                zis.close();
+                fis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        // calls parse segment
+        public ADSBData[] parse() throws FileNotFoundException {
+
+            File dir = new File("./ADSBDownload/" + config.get("importADSB"));
+            File[] directoryListing = dir.listFiles();
+
+            List<AircraftList> l = Arrays.asList(directoryListing)
+                    .parallelStream()
+                    .map(this::parseSegment)
+                    .flatMap(Arrays::stream)
+                    .filter(this::filter)
+                    .collect(Collectors.toList());
+
+            return convertAircraftToADSB(l);
         }
 
-        ADSBData[] parseSegment(FileInputStream f) {
-            //TODO
-            return null;
+
+        ADSBData[] convertAircraftToADSB(List<AircraftList> ac){
+            List<ADSBData> adsb = new ArrayList<>();
+
+            for(AircraftList aircraft : ac){
+                adsb.add(new ADSBData(aircraft.Reg, new LatLong(aircraft.Lat, aircraft.Long), aircraft.Alt, Float.parseFloat(aircraft.Spd.toString())));
+            }
+
+            return adsb.toArray(new ADSBData[]{});
+        }
+        // takes file from parse(), reads it, makes objects
+        AircraftList[] parseSegment(File f) {
+            try{
+                Gson gson = new Gson();
+                JsonReader reader = new JsonReader(new FileReader(f));
+                ADSBJSON adsb = gson.fromJson(reader, ADSBJSON.class);
+                return adsb.acList;
+            }
+            catch(Exception e){
+                e.printStackTrace();
+                return null;
+            }
         }
 
+        // filters out tail numbers that arent in TailNumbers table.
+        boolean filter(AircraftList aircraft) {
 
+            return connection.createQuery(TailNumber.class).field("tailNumber").equal(aircraft.Reg).count()>1;
+
+        }
     }
 }
