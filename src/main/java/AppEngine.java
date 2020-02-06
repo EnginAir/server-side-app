@@ -29,7 +29,7 @@ public class AppEngine {
 
     private static HashMap<String, String> parseArgs(String[] args){
 
-        HashMap<String, String> parsedAgrs = new HashMap<>();
+        HashMap<String, String> parsedArgs = new HashMap<>();
 
         // command line inputs for shit
         final Options options = new Options();
@@ -44,7 +44,7 @@ public class AppEngine {
         try {
             // parse the command line arguments and add to hashmap.
             for(Option option : parser.parse( options, args ).getOptions()) {
-                parsedAgrs.put(option.getLongOpt(), option.getValue());
+                parsedArgs.put(option.getLongOpt(), option.getValue());
             }
         }
         catch( ParseException exp ) {
@@ -52,7 +52,7 @@ public class AppEngine {
             System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
         }
 
-        return parsedAgrs;
+        return parsedArgs;
     }
 
     private boolean execute(HashMap<String, String> parsedArgs){
