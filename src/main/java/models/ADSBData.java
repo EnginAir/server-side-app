@@ -12,19 +12,24 @@
 
 package models;
 
+import java.util.Date;
+
 public class ADSBData {
 
-    String tailNumber;
-    LatLong location;
-    Float altitude;
-    Float speed;
+    public String tailNumber;
+    public LatLong location;
+    public Float altitude;
+    public Float speed;
+    public Date PosTime;
 
 
-    public ADSBData(String tailNumber, LatLong location, Float altitude, Float speed){
+    public ADSBData(String tailNumber, LatLong location, Float altitude, Float speed, Long PosTime){
         this.tailNumber = tailNumber;
         this.location = location;
         this.altitude = altitude;
         this.speed = speed;
+        this.PosTime = new Date(PosTime);
+
     }
 
 }

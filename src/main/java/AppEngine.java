@@ -31,7 +31,7 @@ public class AppEngine {
 
         HashMap<String, String> parsedArgs = new HashMap<>();
 
-        // command line inputs for shit
+        // command line inputs for stuff
         final Options options = new Options();
         options.addOption(new Option("t", "importTails", true, "imports tails from tails.json"));
         options.addOption(new Option("a", "importADSB", true, "imports data from ADSB param format of \"YYYY-MM-DD\""));

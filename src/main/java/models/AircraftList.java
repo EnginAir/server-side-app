@@ -5,10 +5,10 @@ public class AircraftList {
     public Float Alt;
     public Float Lat;
     public Float Long;
-    public Double Spd;
+    public Float Spd;
     public Long PosTime;
 
-    public AircraftList(String Reg, Float Alt, Float Lat, Float Long, Double Spd, Long PosTime) {
+    public AircraftList(String Reg, Float Alt, Float Lat, Float Long, Float Spd, Long PosTime) {
         this.Reg = Reg;
         this.Alt = Alt;
         this.Lat = Lat;

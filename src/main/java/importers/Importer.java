@@ -17,6 +17,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 public abstract class Importer {
     Datastore connection;
@@ -27,5 +28,5 @@ public abstract class Importer {
         this.connection = connection;
     }
 
-    public abstract boolean execute() throws IOException, ParseException;
+    public abstract boolean execute() throws IOException, ParseException, ExecutionException, InterruptedException;
 }
