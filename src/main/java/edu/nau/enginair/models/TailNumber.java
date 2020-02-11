@@ -10,21 +10,13 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import dev.morphia.Datastore;
+package edu.nau.enginair.models;
 
-import java.util.HashMap;
+public class TailNumber {
 
-public class Correlator {
-    private Datastore connection;
-    private HashMap<String, String> config;
+    public String tailNumber;
 
-    public Correlator(HashMap<String, String> config, Datastore connection) {
-        this.connection = connection;
-        this.config = config;
-    }
-
-    public int execute() {
-        //TODO
-        return -1;
+    public TailNumber() {
+        this.tailNumber = "";
     }
 }

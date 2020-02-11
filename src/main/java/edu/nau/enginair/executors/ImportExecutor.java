@@ -10,15 +10,16 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package executors;
+package edu.nau.enginair.executors;
 
 import com.mongodb.MongoClient;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
-import importers.ADSBImporter;
-import importers.CEDASImporter;
-import importers.Importer;
-import importers.TailImporter;
+import edu.nau.enginair.Correlator;
+import edu.nau.enginair.importers.ADSBImporter;
+import edu.nau.enginair.importers.CEDASImporter;
+import edu.nau.enginair.importers.Importer;
+import edu.nau.enginair.importers.TailImporter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class ImportExecutor {
                 if(importer != null){
                     importer.execute();
                 }
-
+                new Correlator(config, dataStore).execute();
             }
             return true;
         }
@@ -71,7 +72,7 @@ public class ImportExecutor {
     private Datastore makeConnection(String dbName) {
 
         final Morphia morphia = new Morphia();
-        morphia.mapPackage("models");
+        morphia.mapPackage("edu/nau/enginair/models");
         return morphia.createDatastore(new MongoClient(), dbName);
     }
 }

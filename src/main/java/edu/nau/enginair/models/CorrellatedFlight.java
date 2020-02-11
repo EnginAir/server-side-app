@@ -10,16 +10,42 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package models;
+package edu.nau.enginair.models;
+
+import com.google.gson.annotations.Expose;
+import dev.morphia.annotations.Id;
+import lombok.Getter;
+import lombok.Setter;
+import org.bson.types.ObjectId;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class CorrellatedFlight {
+    @Getter
+    @Id
+    private ObjectId id;
+    @Getter
+    @Setter
     private String tailNumber;
+    @Getter
+    @Setter
     private LatLong landingPoint;
+    @Getter
+    @Setter
+    private LatLong takeoffPoint;
+    @Getter
+    @Setter
+    private Date landingDate;
+    @Getter
+    @Expose(serialize = false, deserialize = false)
+    private List<LatLong> flightPath;
+    @Getter
+    @Setter
+    private FlightOutcome outcome;
 
-    public CorrellatedFlight(String tailNumber, LatLong landingPoint){
-
-        this.tailNumber = tailNumber;
-        this.landingPoint = landingPoint;
-
+    public CorrellatedFlight() {
+        flightPath = new ArrayList<>();
     }
 }

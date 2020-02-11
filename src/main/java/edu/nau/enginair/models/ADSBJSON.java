@@ -10,22 +10,8 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package importers;
+package edu.nau.enginair.models;
 
-import dev.morphia.Datastore;
-import org.json.simple.parser.ParseException;
-
-import java.io.IOException;
-import java.util.HashMap;
-
-public abstract class Importer {
-    Datastore connection;
-    HashMap<String, String> config;
-
-    public Importer(HashMap<String, String> config, Datastore connection) {
-        this.config = config;
-        this.connection = connection;
-    }
-
-    public abstract boolean execute() throws IOException, ParseException;
+public class ADSBJSON {
+    public AircraftList[] acList;
 }

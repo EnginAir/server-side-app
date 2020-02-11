@@ -10,14 +10,22 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package models;
+package edu.nau.enginair.models;
 
-public class LatLong {
-    private Float latitude;
-    private Float longitude;
+public class AircraftList {
+    public String Reg;
+    public Float Alt;
+    public Float Lat;
+    public Float Long;
+    public Float Spd;
+    public Long PosTime;
 
-    public LatLong(Float latitude, Float longitude){
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public AircraftList(String Reg, Float Alt, Float Lat, Float Long, Float Spd, Long PosTime) {
+        this.Reg = Reg;
+        this.Alt = Alt;
+        this.Lat = Lat;
+        this.Long = Long;
+        this.Spd = Spd;
+        this.PosTime = PosTime;
     }
 }

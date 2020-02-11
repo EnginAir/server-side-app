@@ -10,21 +10,43 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package models;
+package edu.nau.enginair.models;
 
-public class ADSBData {
+import java.util.Date;
+
+public class CEDASUpload {
+
+//    Engine rolldown GPS location
+//    Engine rolldown time/date
+//    Engine start GPS location
+//    Engine start time/date
+//    Upload GPS location (assumed to be half way between rolldown and start location)
+//    WAP signal strength
+//    WAP ID
+//    Airport Code
 
     String tailNumber;
-    LatLong location;
-    Float altitude;
-    Float speed;
+    LatLong rolldown;
+    Date rolldownTimeDate;
+    LatLong startUp;
+    Date startUpTimeDate;
+    LatLong uploadLocation;
+    String wapStrength;
+    String wapID;
+    String airportCode;
 
-
-    public ADSBData(String tailNumber, LatLong location, Float altitude, Float speed){
-        this.tailNumber = tailNumber;
-        this.location = location;
-        this.altitude = altitude;
-        this.speed = speed;
+    public CEDASUpload() {
     }
 
+    public CEDASUpload(String tailNumber, LatLong rolldown, Date rolldownTimeDate, LatLong startUp, Date startUpTimeDate, LatLong uploadLocation, String wapStrength, String wapID, String airportCode) {
+        this.tailNumber = tailNumber;
+        this.rolldown = rolldown;
+        this.rolldownTimeDate = rolldownTimeDate;
+        this.startUp = startUp;
+        this.startUpTimeDate = startUpTimeDate;
+        this.uploadLocation = uploadLocation;
+        this.wapStrength = wapStrength;
+        this.wapID = wapID;
+        this.airportCode = airportCode;
+    }
 }
