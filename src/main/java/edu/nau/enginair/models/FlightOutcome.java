@@ -10,21 +10,16 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import dev.morphia.Datastore;
+package edu.nau.enginair.models;
 
-import java.util.HashMap;
-
-public class Correlator {
-    private Datastore connection;
-    private HashMap<String, String> config;
-
-    public Correlator(HashMap<String, String> config, Datastore connection) {
-        this.connection = connection;
-        this.config = config;
-    }
-
-    public int execute() {
-        //TODO
-        return -1;
-    }
+/**
+ * Created by ianot on 2/10/2020. None of this software may be reproduced without
+ * the express written permission of PlaygroundMC.
+ */
+public enum FlightOutcome {
+    SUCCESS_UPLOAD,
+    FAIL_NO_LANDING,
+    FAIL_NO_UPLOAD,
+    FAIL_NO_DATA,
+    FAIL_IN_PROGRESS
 }

@@ -10,17 +10,25 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package importers;
+package edu.nau.enginair.importers;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import models.*;
 import dev.morphia.Datastore;
+import edu.nau.enginair.models.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 import java.io.*;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
@@ -54,6 +62,33 @@ public class ADSBImporter extends Importer {
 
     class ADSBDownloader {
 
+        public boolean saveFile(URL imgURL, String imgSavePath) {
+
+            boolean isSucceed = true;
+
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+
+            HttpGet httpGet = new HttpGet(imgURL.toString());
+            httpGet.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.11 Safari/537.36");
+            httpGet.addHeader("Referer", "https://www.adsbexchange.com");
+
+            try {
+                CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
+                HttpEntity imageEntity = httpResponse.getEntity();
+
+                if (imageEntity != null) {
+                    FileUtils.copyInputStreamToFile(imageEntity.getContent(), new File(imgSavePath));
+                }
+
+            } catch (IOException e) {
+                isSucceed = false;
+            }
+
+            httpGet.releaseConnection();
+
+            return isSucceed;
+        }
+
         ADSBData[] execute() throws IOException, ExecutionException, InterruptedException {
             List<ADSBData> dataList = new ArrayList<>();
             download(true);
@@ -61,7 +96,7 @@ public class ADSBImporter extends Importer {
         }
 
         boolean download(boolean isTest) throws IOException {
-            if(new File("./ADSBDownload/" + config.get("importADSB") + ".zip").exists()) {
+            if (new File("./ADSBDownload/" + config.get("importADSB") + ".zip").exists()) {
                 extract();
                 return true;
             }
@@ -69,7 +104,7 @@ public class ADSBImporter extends Importer {
                 try{
 
                     System.out.println("Downloading le file lololol");
-                    FileUtils.copyURLToFile(new URL("https://history.adsbexchange.com/downloads/samples/" + config.get("importADSB") + ".zip"), new File("./ADSBDownload/" + config.get("importADSB") + ".zip"), 10000, 1000000);
+                    saveFile(new URL("https://history.adsbexchange.com/downloads/samples/" + config.get("importADSB") + ".zip"), "./ADSBDownload/" + config.get("importADSB") + ".zip");
                     extract();
                     return true;
                 }

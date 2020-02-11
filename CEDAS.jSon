@@ -2,21 +2,21 @@
   {
     "tailNumber": "E392TLS",
     "rolldown": {
-      "latitude": "-12938292.2192",
-      "longitude": "390290.21929"
+      "latitude": "29.991790771484375",
+      "longitude": "-95.29151153564453"
     },
     "rolldownTimeDate": "10-29-2004",
     "starUp": {
-      "latitude": "293828",
-      "longitude": "-1293994"
+      "latitude": "29.991790771484375",
+      "longitude": "-95.29151153564453"
     },
     "startUpTimeDate": "10-30-2004",
     "uploadLocation": {
-      "latitude": "-2923994.23",
-      "longitude": "392093.329"
+      "latitude": "29.991790771484375",
+      "longitude": "-95.29151153564453"
     },
     "wapStrength": "2.3",
     "wapID": "PhxAZNoPasswordSecure",
-    "airportCode": "phx"
+    "airportCode": "PHX"
   }
 ]
