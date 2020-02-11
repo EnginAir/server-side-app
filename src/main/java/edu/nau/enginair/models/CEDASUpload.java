@@ -12,6 +12,8 @@
 
 package edu.nau.enginair.models;
 
+import java.util.Date;
+
 public class CEDASUpload {
 
 //    Engine rolldown GPS location
@@ -25,15 +27,18 @@ public class CEDASUpload {
 
     String tailNumber;
     LatLong rolldown;
-    String rolldownTimeDate;
+    Date rolldownTimeDate;
     LatLong startUp;
-    String startUpTimeDate;
+    Date startUpTimeDate;
     LatLong uploadLocation;
     String wapStrength;
     String wapID;
     String airportCode;
 
-    public CEDASUpload(String tailNumber, LatLong rolldown, String rolldownTimeDate, LatLong startUp, String startUpTimeDate, LatLong uploadLocation, String wapStrength, String wapID, String airportCode){
+    public CEDASUpload() {
+    }
+
+    public CEDASUpload(String tailNumber, LatLong rolldown, Date rolldownTimeDate, LatLong startUp, Date startUpTimeDate, LatLong uploadLocation, String wapStrength, String wapID, String airportCode) {
         this.tailNumber = tailNumber;
         this.rolldown = rolldown;
         this.rolldownTimeDate = rolldownTimeDate;

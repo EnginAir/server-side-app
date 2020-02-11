@@ -76,9 +76,9 @@ public class CEDASImporter extends Importer {
                     cedatas.add(new CEDASUpload(
                             row.getCell(0).toString(),
                             new LatLong(Float.parseFloat(row.getCell(1).toString()), Float.parseFloat(row.getCell(2).toString())),
-                            row.getCell(3).toString(),
+                            row.getCell(3).getDateCellValue(),
                             new LatLong(Float.parseFloat(row.getCell(4).toString()), Float.parseFloat(row.getCell(5).toString())),
-                            row.getCell(6).toString(),
+                            row.getCell(6).getDateCellValue(),
                             new LatLong(Float.parseFloat(row.getCell(7).toString()), Float.parseFloat(row.getCell(8).toString())),
                             row.getCell(9).toString(),
                             row.getCell(10).toString(),

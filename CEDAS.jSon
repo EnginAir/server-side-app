@@ -5,12 +5,12 @@
       "latitude": "29.991790771484375",
       "longitude": "-95.29151153564453"
     },
-    "rolldownTimeDate": "10-29-2004",
-    "starUp": {
+    "rolldownTimeDate": 1454284800,
+    "startUp": {
       "latitude": "29.991790771484375",
       "longitude": "-95.29151153564453"
     },
-    "startUpTimeDate": "10-30-2004",
+    "startUpTimeDate": 1454284800,
     "uploadLocation": {
       "latitude": "29.991790771484375",
       "longitude": "-95.29151153564453"

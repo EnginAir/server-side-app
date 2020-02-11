@@ -13,8 +13,10 @@
 package edu.nau.enginair.models;
 
 import com.google.gson.annotations.Expose;
+import dev.morphia.annotations.Id;
 import lombok.Getter;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,7 +24,8 @@ import java.util.List;
 
 public class CorrellatedFlight {
     @Getter
-    private String _id;
+    @Id
+    private ObjectId id;
     @Getter
     @Setter
     private String tailNumber;

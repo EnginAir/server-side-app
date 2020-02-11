@@ -23,14 +23,13 @@ package edu.nau.enginair;/*
  */
 
 import dev.morphia.Datastore;
+import dev.morphia.geo.GeoJson;
+import dev.morphia.query.FindOptions;
 import dev.morphia.query.Query;
 import dev.morphia.query.Sort;
-import edu.nau.enginair.models.ADSBData;
-import edu.nau.enginair.models.AggregatedTailNumber;
-import edu.nau.enginair.models.CorrellatedFlight;
+import edu.nau.enginair.models.*;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 public class Correlator {
     private Datastore connection;
@@ -51,8 +50,6 @@ public class Correlator {
                 .match(q)
                 .group("tailNumber")
                 .aggregate(AggregatedTailNumber.class);
-        if (tails.hasNext())
-            tails.next(); //advance cursor by one? apparently that's what morphia wants
         while (tails.hasNext()) {
             processTail(tails.next());
         }
@@ -67,6 +64,7 @@ public class Correlator {
                 .order(Sort.ascending("PosTime"))
                 .find();
         ADSBData previous = null, current;
+        List<CorrellatedFlight> flights = new ArrayList<>();
         CorrellatedFlight currentFlight = null;
         while (data.hasNext()) {
             current = data.next();
@@ -77,16 +75,65 @@ public class Correlator {
                         currentFlight.setLandingPoint(previous.location);
                     } else {
                         System.out.println("Location was not a landing disposition! Not setting a landing point!");
+                        currentFlight.setOutcome(FlightOutcome.WARN_IN_PROGRESS);
                     }
+                    flights.add(currentFlight);
                     this.connection.save(currentFlight);
                 }
                 currentFlight = new CorrellatedFlight();
                 currentFlight.getFlightPath().add(current.location);
                 currentFlight.setTakeoffPoint(current.location);
+                currentFlight.setTailNumber(current.tailNumber);
             } else {
                 currentFlight.getFlightPath().add(current.location);
             }
             previous = current;
+        }
+        correlate(flights);
+    }
+
+    private void correlate(List<CorrellatedFlight> flights) {
+        for (CorrellatedFlight flight : flights) {
+            if (flight.getLandingPoint() == null && flight.getOutcome() != FlightOutcome.WARN_IN_PROGRESS) {
+                flight.setOutcome(FlightOutcome.FAIL_NO_LANDING);
+            } else {
+                Query<CEDASUpload> hasUpload = connection.createQuery(CEDASUpload.class)
+                        .field("tailNumber").equalIgnoreCase(flight.getTailNumber())
+                        .field("rolldownTimeDate").greaterThan(flight.getLandingDate())
+                        .field("rolldownTimeDate").lessThan(new Date(flight.getLandingDate().getTime() + (1000 * 60 * 60)))
+                        .field("rolldown.geometry").near(GeoJson.point(flight.getLandingPoint().getLatitude(), flight.getLandingPoint().getLongitude()), 1000d, 0d);
+                CEDASUpload c = hasUpload.first();
+                if (c == null) {
+                    Query<CEDASUpload> anyUploadsAtPoint = connection.createQuery(CEDASUpload.class)
+                            .field("rolldown.geometry").near(GeoJson.point(flight.getLandingPoint().getLatitude(), flight.getLandingPoint().getLongitude()), 1000);
+                    CEDASUpload a = anyUploadsAtPoint.first();
+                    if (a == null) {
+                        flight.setOutcome(FlightOutcome.FAIL_NO_WIFI_AIRPORT);
+                    } else {
+                        Query<CorrellatedFlight> anyUploadsRecently = connection.createQuery(CorrellatedFlight.class)
+                                .field("tailNumber").equalIgnoreCase(flight.getTailNumber())
+                                .order(Sort.descending("landingDate"));
+                        Iterator<CorrellatedFlight> it = anyUploadsRecently.find(new FindOptions().limit(3));
+                        int counter = 0;
+                        while (it.hasNext()) {
+                            CorrellatedFlight up = it.next();
+                            if (up.getOutcome() == FlightOutcome.SUCCESS_UPLOAD) {
+                                flight.setOutcome(FlightOutcome.FAIL_WAP_CHANGED);
+                            } else {
+                                counter++;
+                            }
+                        }
+                        if (counter == 3) {
+                            flight.setOutcome(FlightOutcome.FAIL_DEAD_EDG100);
+                        } else {
+                            flight.setOutcome(FlightOutcome.FAIL_NO_WIFI_AIRCRAFT);
+                        }
+                    }
+                } else {
+                    flight.setOutcome(FlightOutcome.SUCCESS_UPLOAD);
+                }
+            }
+            connection.save(flight);
         }
     }
 

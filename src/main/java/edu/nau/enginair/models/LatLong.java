@@ -13,12 +13,27 @@
 package edu.nau.enginair.models;
 
 public class LatLong {
-    private Float latitude;
-    private Float longitude;
+    private String type = "Point";
+    private Float[] geometry = new Float[]{0f, 0f};
 
     public LatLong(Float latitude, Float longitude) {
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.geometry = new Float[]{longitude, latitude};
+    }
+
+    public void setLongitude(Float longg) {
+        geometry[0] = longg;
+    }
+
+    public void setLatitude(Float lat) {
+        geometry[1] = lat;
+    }
+
+    public float getLongitude() {
+        return geometry[0];
+    }
+
+    public float getLatitude() {
+        return geometry[1];
     }
 
     public LatLong() {

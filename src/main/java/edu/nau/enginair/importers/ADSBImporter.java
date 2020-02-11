@@ -129,7 +129,7 @@ public class ADSBImporter extends Importer {
             try{
                 String zipFilePath = "./ADSBDownload/" + config.get("importADSB") + ".zip";
                 String destDir = "./ADSBDownload/" + config.get("importADSB");
-                unzip(zipFilePath, destDir);
+                //unzip(zipFilePath, destDir);
                 return true;
             }
             catch(Exception e){

@@ -19,7 +19,9 @@ package edu.nau.enginair.models;
 public enum FlightOutcome {
     SUCCESS_UPLOAD,
     FAIL_NO_LANDING,
-    FAIL_NO_UPLOAD,
-    FAIL_NO_DATA,
-    FAIL_IN_PROGRESS
+    WARN_IN_PROGRESS,
+    FAIL_NO_WIFI_AIRPORT,
+    FAIL_NO_WIFI_AIRCRAFT,
+    FAIL_DEAD_EDG100,
+    FAIL_WAP_CHANGED
 }
