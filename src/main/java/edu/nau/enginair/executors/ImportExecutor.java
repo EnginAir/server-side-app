@@ -20,6 +20,7 @@ import edu.nau.enginair.importers.ADSBImporter;
 import edu.nau.enginair.importers.CEDASImporter;
 import edu.nau.enginair.importers.Importer;
 import edu.nau.enginair.importers.TailImporter;
+import edu.nau.enginair.misc.FlightOutcomeTypeConverter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -73,6 +74,7 @@ public class ImportExecutor {
 
         final Morphia morphia = new Morphia();
         morphia.mapPackage("edu/nau/enginair/models");
+        morphia.getMapper().getConverters().addConverter(new FlightOutcomeTypeConverter());
         return morphia.createDatastore(new MongoClient(), dbName);
     }
 }

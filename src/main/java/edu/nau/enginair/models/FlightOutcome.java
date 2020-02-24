@@ -12,16 +12,43 @@
 
 package edu.nau.enginair.models;
 
+import lombok.Getter;
+
 /**
  * Created by ianot on 2/10/2020. None of this software may be reproduced without
  * the express written permission of PlaygroundMC.
  */
 public enum FlightOutcome {
-    SUCCESS_UPLOAD,
-    FAIL_NO_LANDING,
-    WARN_IN_PROGRESS,
-    FAIL_NO_WIFI_AIRPORT,
-    FAIL_NO_WIFI_AIRCRAFT,
-    FAIL_DEAD_EDG100,
-    FAIL_WAP_CHANGED
+    SUCCESS_UPLOAD(0),
+    FAIL_NO_LANDING(1),
+    WARN_IN_PROGRESS(2),
+    FAIL_NO_WIFI_AIRPORT(3),
+    FAIL_NO_WIFI_AIRCRAFT(4),
+    FAIL_DEAD_EDG100(5),
+    FAIL_WAP_CHANGED(6);
+    @Getter
+    final int outcomeNum;
+    FlightOutcome(int outcomeNum) {
+        this.outcomeNum = outcomeNum;
+    }
+    public static FlightOutcome fromInt(int i) {
+        switch(i) {
+            case 0:
+                return SUCCESS_UPLOAD;
+            case 1:
+                return FAIL_NO_LANDING;
+            case 2:
+                return WARN_IN_PROGRESS;
+            case 3:
+                return FAIL_NO_WIFI_AIRPORT;
+            case 4:
+                return FAIL_NO_WIFI_AIRCRAFT;
+            case 5:
+                return FAIL_DEAD_EDG100;
+            case 6:
+                return FAIL_WAP_CHANGED;
+            default:
+                return null;
+        }
+    }
 }

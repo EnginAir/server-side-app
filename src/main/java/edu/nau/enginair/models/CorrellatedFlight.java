@@ -14,6 +14,7 @@ package edu.nau.enginair.models;
 
 import com.google.gson.annotations.Expose;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.Indexed;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.types.ObjectId;
@@ -28,6 +29,7 @@ public class CorrellatedFlight {
     private ObjectId id;
     @Getter
     @Setter
+    @Indexed
     private String tailNumber;
     @Getter
     @Setter
@@ -43,6 +45,7 @@ public class CorrellatedFlight {
     private List<LatLong> flightPath;
     @Getter
     @Setter
+    @Indexed
     private FlightOutcome outcome;
 
     public CorrellatedFlight() {
