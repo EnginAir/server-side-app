@@ -17,8 +17,8 @@ import com.google.gson.stream.JsonReader;
 import dev.morphia.Datastore;
 import edu.nau.enginair.models.CEDASUpload;
 import edu.nau.enginair.models.LatLong;
+import edu.nau.enginair.models.Wifi;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -53,7 +53,6 @@ public class CEDASImporter extends Importer {
         XSSFWorkbook wb = new XSSFWorkbook(fileInput);
         XSSFSheet sheet = wb.getSheetAt(0);
         XSSFRow row;
-        XSSFCell cell;
 
         int rows = sheet.getPhysicalNumberOfRows();
         int cols = 0;
@@ -100,12 +99,14 @@ public class CEDASImporter extends Importer {
                 JsonReader reader = new JsonReader(new FileReader(config.get("importCEDAS")));
                 cedasData = gson.fromJson(reader, CEDASUpload[].class);
             }
-            else{
+            else {
                 cedasData = cedasUploads.toArray(new CEDASUpload[]{});
             }
 
             connection.ensureIndexes();
             for(CEDASUpload cu : cedasData){
+                Wifi f = new Wifi(cu.getWapID(), "undefined", cu.getAirportCode(), cu.getUploadLocation(), cu.getWapStrength());
+                connection.save(f);
                 connection.save(cu);
             }
 

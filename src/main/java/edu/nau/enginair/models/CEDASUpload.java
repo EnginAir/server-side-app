@@ -12,6 +12,8 @@
 
 package edu.nau.enginair.models;
 
+import lombok.Getter;
+
 import java.util.Date;
 
 public class CEDASUpload {
@@ -30,9 +32,13 @@ public class CEDASUpload {
     Date rolldownTimeDate;
     LatLong startUp;
     Date startUpTimeDate;
+    @Getter
     LatLong uploadLocation;
-    String wapStrength;
+    @Getter
+    Float wapStrength;
+    @Getter
     String wapID;
+    @Getter
     String airportCode;
 
     public CEDASUpload() {
@@ -45,7 +51,7 @@ public class CEDASUpload {
         this.startUp = startUp;
         this.startUpTimeDate = startUpTimeDate;
         this.uploadLocation = uploadLocation;
-        this.wapStrength = wapStrength;
+        this.wapStrength = Float.valueOf(wapStrength);
         this.wapID = wapID;
         this.airportCode = airportCode;
     }
