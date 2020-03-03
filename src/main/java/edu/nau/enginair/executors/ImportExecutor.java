@@ -43,8 +43,8 @@ public class ImportExecutor {
                 if(importer != null){
                     importer.execute();
                 }
-                new Correlator(config, dataStore).execute();
             }
+            new Correlator(config, dataStore).execute();
             return true;
         }
 
@@ -72,7 +72,7 @@ public class ImportExecutor {
     private Datastore makeConnection(String dbName) {
 
         final Morphia morphia = new Morphia();
-        morphia.mapPackage("edu/nau/enginair/models");
+        morphia.mapPackage("edu.nau.enginair.models");
         return morphia.createDatastore(new MongoClient(), dbName);
     }
 }
