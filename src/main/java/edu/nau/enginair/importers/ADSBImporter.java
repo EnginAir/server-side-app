@@ -53,7 +53,6 @@ public class ADSBImporter extends Importer {
             for(ADSBData ad : adsbData) {
                 try {
                     connection.save(ad);
-                    System.out.println("Added to DB " + ad.tailNumber);
                 } catch (DuplicateKeyException e) {
                     System.out.println("Ignored duplicate entry for " + ad.tailNumber);
                 }
@@ -208,9 +207,8 @@ public class ADSBImporter extends Importer {
             List<ADSBData> adsb = new ArrayList<>();
 
             for(AircraftList aircraft : ac){
-                if(aircraft.PosTime != null) {
+                if(aircraft.PosTime != null && aircraft.Alt != null && aircraft.Spd != null) {
                     adsb.add(new ADSBData(aircraft.Reg, new LatLong(aircraft.Lat, aircraft.Long), aircraft.Alt, aircraft.Spd, aircraft.PosTime));
-                    System.out.println("converting aricraft " + aircraft.Reg);
                 }
             }
 
