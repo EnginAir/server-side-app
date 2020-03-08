@@ -36,6 +36,7 @@ public class TailImporter extends Importer {
 
             connection.ensureIndexes();
             for(TailNumber tn : tailNumbers){
+                tn.tailNumber = "N" + tn.tailNumber;
                 connection.save(tn);
             }
 

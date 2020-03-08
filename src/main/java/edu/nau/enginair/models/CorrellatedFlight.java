@@ -14,6 +14,7 @@ package edu.nau.enginair.models;
 
 import com.google.gson.annotations.Expose;
 import dev.morphia.annotations.*;
+import dev.morphia.utils.IndexType;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.types.ObjectId;
@@ -24,7 +25,7 @@ import java.util.List;
 
 @Entity
 @Indexes({
-        @Index(fields = {@Field("tailNumber"), @Field("takeoffPoint.geometry")},
+        @Index(fields = {@Field("tailNumber"), @Field(value = "takeoffPoint.geometry", type = IndexType.GEO2DSPHERE)},
                 options = @IndexOptions(unique = true))
 })
 public class CorrellatedFlight {

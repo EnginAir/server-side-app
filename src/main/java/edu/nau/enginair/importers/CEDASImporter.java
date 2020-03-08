@@ -24,9 +24,9 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.*;
 
 public class CEDASImporter extends Importer {
     public CEDASImporter(HashMap<String, String> config, Datastore connection) {
@@ -68,12 +68,12 @@ public class CEDASImporter extends Importer {
                 cols = tmp;
             }
         }
-
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.ofOffset("UTC", ZoneOffset.ofHours(7))));
         for(int r = 1; r < rows; r++){
             row = sheet.getRow(r);
             if(row != null ){
                 if(row.getCell(0) != null && row.getCell(0).getCellType() != Cell.CELL_TYPE_BLANK){
-                    cedatas.add(new CEDASUpload(
+                    CEDASUpload ce = new CEDASUpload(
                             row.getCell(0).toString(),
                             new LatLong(Float.parseFloat(row.getCell(1).toString()), Float.parseFloat(row.getCell(2).toString())),
                             row.getCell(3).getDateCellValue(),
@@ -82,7 +82,14 @@ public class CEDASImporter extends Importer {
                             new LatLong(Float.parseFloat(row.getCell(7).toString()), Float.parseFloat(row.getCell(8).toString())),
                             row.getCell(9).toString(),
                             row.getCell(10).toString(),
-                            row.getCell(11).toString()));
+                            row.getCell(11).toString());
+                    c.setTime(ce.getRolldownTimeDate());
+                    c.add(Calendar.HOUR, -7);
+                    ce.setRolldownTimeDate(c.getTime());
+                    c.setTime(ce.getStartUpTimeDate());
+                    c.add(Calendar.HOUR, -7);
+                    ce.setStartUpTimeDate(c.getTime());
+                    cedatas.add(ce);
                 }
             }
         }

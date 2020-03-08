@@ -12,8 +12,17 @@
 
 package edu.nau.enginair.models;
 
-import java.util.Date;
+import dev.morphia.annotations.*;
+import dev.morphia.utils.IndexType;
+import lombok.Getter;
+import lombok.Setter;
+import org.bson.types.ObjectId;
 
+import java.util.Date;
+@Entity
+@Indexes({
+        @Index(fields = {@Field(value = "rolldown.geometry", type = IndexType.GEO2DSPHERE)})
+})
 public class CEDASUpload {
 
 //    Engine rolldown GPS location
@@ -24,11 +33,16 @@ public class CEDASUpload {
 //    WAP signal strength
 //    WAP ID
 //    Airport Code
-
+    @Id
+    public ObjectId id;
     String tailNumber;
     LatLong rolldown;
+    @Getter
+    @Setter
     Date rolldownTimeDate;
     LatLong startUp;
+    @Getter
+    @Setter
     Date startUpTimeDate;
     LatLong uploadLocation;
     String wapStrength;
