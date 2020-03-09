@@ -17,6 +17,7 @@ import com.google.gson.stream.JsonReader;
 import dev.morphia.Datastore;
 import edu.nau.enginair.models.CEDASUpload;
 import edu.nau.enginair.models.LatLong;
+import edu.nau.enginair.models.Wifi;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -112,7 +113,14 @@ public class CEDASImporter extends Importer {
             }
 
             connection.ensureIndexes();
-            for(CEDASUpload cu : cedasData){
+            for(CEDASUpload cu : cedasData) {
+                Wifi w = new Wifi();
+                w.airportCode = cu.getAirportCode();
+                w.ssid = cu.getWapID();
+                w.latLong = cu.getUploadLocation();
+                w.password = "fakePassword";
+                w.range = (10f - Float.parseFloat(cu.getWapStrength())) / 10 * 90;
+                connection.save(w);
                 connection.save(cu);
             }
 

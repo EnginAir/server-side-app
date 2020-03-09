@@ -44,9 +44,13 @@ public class CEDASUpload {
     @Getter
     @Setter
     Date startUpTimeDate;
+    @Getter
     LatLong uploadLocation;
+    @Getter
     String wapStrength;
+    @Getter
     String wapID;
+    @Getter
     String airportCode;
 
     public CEDASUpload() {
