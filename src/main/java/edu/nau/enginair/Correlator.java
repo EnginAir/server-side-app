@@ -74,7 +74,7 @@ public class Correlator {
         CorrellatedFlight currentFlight = null;
         while (data.hasNext()) {
             current = data.next();
-            if (shouldBeNewFlight(previous, current)) {
+            if (shouldBeNewFlight(previous, current) || !data.hasNext()) {
                 if (currentFlight != null) {
                     if (isLandingSituation(previous)) {
                         currentFlight.setLandingDate(previous.PosTime);
@@ -84,13 +84,19 @@ public class Correlator {
                         currentFlight.setOutcome(FlightOutcome.WARN_IN_PROGRESS);
                     }
                 }
-                currentFlight = new CorrellatedFlight();
-                currentFlight.getFlightPath().add(current.location);
-                currentFlight.setTakeoffPoint(current.location);
-                currentFlight.setTailNumber(current.tailNumber);
-                flights.add(currentFlight);
+                if (data.hasNext()) {
+                    currentFlight = new CorrellatedFlight();
+                    currentFlight.getFlightPath().add(current.location);
+                    currentFlight.setTakeoffPoint(current.location);
+                    currentFlight.setTailNumber(current.tailNumber);
+                    currentFlight.setLastAltitude(current.altitude);
+                    currentFlight.setLastPing(current.PosTime);
+                    flights.add(currentFlight);
+                }
             } else {
                 currentFlight.getFlightPath().add(current.location);
+                currentFlight.setLastAltitude(current.altitude);
+                currentFlight.setLastPing(current.PosTime);
             }
             previous = current;
         }
@@ -100,9 +106,9 @@ public class Correlator {
     private void correlate(List<CorrellatedFlight> flights) {
         for (CorrellatedFlight flight : flights) {
             if (flight.getLandingPoint() == null && flight.getOutcome() != FlightOutcome.WARN_IN_PROGRESS) {
-                flight.setOutcome(FlightOutcome.FAIL_NO_LANDING);
+                flight.setOutcome(FlightOutcome.WARN_IN_PROGRESS);
             } else if (flight.getOutcome() == FlightOutcome.WARN_IN_PROGRESS) {
-                continue;
+                //intentionally blank
             } else {
                 Query<CEDASUpload> hasUpload = connection.createQuery(CEDASUpload.class)
                         .field("tailNumber").equalIgnoreCase(flight.getTailNumber())
@@ -162,6 +168,6 @@ public class Correlator {
     }
 
     private boolean isLandingSituation(ADSBData data) {
-        return data.altitude < 3000 && data.speed < 300;
+        return data.altitude < 6000 && data.speed < 300;
     }
 }

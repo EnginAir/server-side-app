@@ -34,6 +34,12 @@ public class CorrellatedFlight {
     private ObjectId id;
     @Getter
     @Setter
+    private Float lastAltitude;
+    @Getter
+    @Setter
+    private Date lastPing;
+    @Getter
+    @Setter
     private String tailNumber;
     @Getter
     @Setter
