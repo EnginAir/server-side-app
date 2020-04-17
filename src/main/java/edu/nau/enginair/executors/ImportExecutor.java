@@ -73,6 +73,6 @@ public class ImportExecutor {
 
         final Morphia morphia = new Morphia();
         morphia.mapPackage("edu.nau.enginair.models");
-        return morphia.createDatastore(new MongoClient(), dbName);
+        return morphia.createDatastore(new MongoClient(System.getenv("MONGO_HOST")), dbName);
     }
 }
