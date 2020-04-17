@@ -13,8 +13,8 @@
 package edu.nau.enginair.models;
 
 import com.google.gson.annotations.Expose;
-import dev.morphia.annotations.Id;
-import dev.morphia.annotations.Indexed;
+import dev.morphia.annotations.*;
+import dev.morphia.utils.IndexType;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.types.ObjectId;
@@ -23,13 +23,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Entity
+@Indexes({
+        @Index(fields = {@Field("tailNumber"), @Field(value = "takeoffPoint.geometry", type = IndexType.GEO2DSPHERE)},
+                options = @IndexOptions(unique = true))
+})
 public class CorrellatedFlight {
     @Getter
     @Id
     private ObjectId id;
     @Getter
     @Setter
-    @Indexed
+    private Float lastAltitude;
+    @Getter
+    @Setter
+    private Date lastPing;
+    @Getter
+    @Setter
     private String tailNumber;
     @Getter
     @Setter
@@ -45,7 +55,6 @@ public class CorrellatedFlight {
     private List<LatLong> flightPath;
     @Getter
     @Setter
-    @Indexed
     private FlightOutcome outcome;
 
     public CorrellatedFlight() {

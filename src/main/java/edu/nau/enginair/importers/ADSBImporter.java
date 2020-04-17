@@ -14,6 +14,7 @@ package edu.nau.enginair.importers;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import com.mongodb.DuplicateKeyException;
 import dev.morphia.Datastore;
 import edu.nau.enginair.models.*;
 import org.apache.commons.io.FileUtils;
@@ -49,9 +50,12 @@ public class ADSBImporter extends Importer {
             System.out.println("Data isnt null");
             System.out.println("Length: " + adsbData.length);
             connection.ensureIndexes();
-            for(ADSBData ad : adsbData){
-                System.out.println("Added to DB " + ad.tailNumber);
-                connection.save(ad);
+            for(ADSBData ad : adsbData) {
+                try {
+                    connection.save(ad);
+                } catch (DuplicateKeyException e) {
+                    System.out.println("Ignored duplicate entry for " + ad.tailNumber);
+                }
             }
             return true;
         }
@@ -90,7 +94,6 @@ public class ADSBImporter extends Importer {
         }
 
         ADSBData[] execute() throws IOException, ExecutionException, InterruptedException {
-            List<ADSBData> dataList = new ArrayList<>();
             download(true);
             return parse();
         }
@@ -144,7 +147,7 @@ public class ADSBImporter extends Importer {
             if(!dir.exists()) dir.mkdirs();
             FileInputStream fis;
             //buffer for read and write data to file
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[4096];
             try {
                 fis = new FileInputStream(zipFilePath);
                 ZipInputStream zis = new ZipInputStream(fis);
@@ -172,8 +175,6 @@ public class ADSBImporter extends Importer {
                 zis.close();
                 System.out.println("Fis close");
                 fis.close();
-
-                System.out.println("Finished Unzipping?");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -206,9 +207,8 @@ public class ADSBImporter extends Importer {
             List<ADSBData> adsb = new ArrayList<>();
 
             for(AircraftList aircraft : ac){
-                if(aircraft.PosTime != null) {
+                if(aircraft.PosTime != null && aircraft.Alt != null && aircraft.Spd != null) {
                     adsb.add(new ADSBData(aircraft.Reg, new LatLong(aircraft.Lat, aircraft.Long), aircraft.Alt, aircraft.Spd, aircraft.PosTime));
-                    System.out.println("converting aricraft " + aircraft.Reg);
                 }
             }
 

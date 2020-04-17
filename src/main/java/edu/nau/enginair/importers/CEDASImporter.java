@@ -19,14 +19,15 @@ import edu.nau.enginair.models.CEDASUpload;
 import edu.nau.enginair.models.LatLong;
 import edu.nau.enginair.models.Wifi;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.*;
 
 public class CEDASImporter extends Importer {
     public CEDASImporter(HashMap<String, String> config, Datastore connection) {
@@ -53,6 +54,7 @@ public class CEDASImporter extends Importer {
         XSSFWorkbook wb = new XSSFWorkbook(fileInput);
         XSSFSheet sheet = wb.getSheetAt(0);
         XSSFRow row;
+        XSSFCell cell;
 
         int rows = sheet.getPhysicalNumberOfRows();
         int cols = 0;
@@ -67,12 +69,12 @@ public class CEDASImporter extends Importer {
                 cols = tmp;
             }
         }
-
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.ofOffset("UTC", ZoneOffset.ofHours(7))));
         for(int r = 1; r < rows; r++){
             row = sheet.getRow(r);
             if(row != null ){
                 if(row.getCell(0) != null && row.getCell(0).getCellType() != Cell.CELL_TYPE_BLANK){
-                    cedatas.add(new CEDASUpload(
+                    CEDASUpload ce = new CEDASUpload(
                             row.getCell(0).toString(),
                             new LatLong(Float.parseFloat(row.getCell(1).toString()), Float.parseFloat(row.getCell(2).toString())),
                             row.getCell(3).getDateCellValue(),
@@ -81,7 +83,14 @@ public class CEDASImporter extends Importer {
                             new LatLong(Float.parseFloat(row.getCell(7).toString()), Float.parseFloat(row.getCell(8).toString())),
                             row.getCell(9).toString(),
                             row.getCell(10).toString(),
-                            row.getCell(11).toString()));
+                            row.getCell(11).toString());
+                    c.setTime(ce.getRolldownTimeDate());
+                    c.add(Calendar.HOUR, -7);
+                    ce.setRolldownTimeDate(c.getTime());
+                    c.setTime(ce.getStartUpTimeDate());
+                    c.add(Calendar.HOUR, -7);
+                    ce.setStartUpTimeDate(c.getTime());
+                    cedatas.add(ce);
                 }
             }
         }
@@ -99,14 +108,19 @@ public class CEDASImporter extends Importer {
                 JsonReader reader = new JsonReader(new FileReader(config.get("importCEDAS")));
                 cedasData = gson.fromJson(reader, CEDASUpload[].class);
             }
-            else {
+            else{
                 cedasData = cedasUploads.toArray(new CEDASUpload[]{});
             }
 
             connection.ensureIndexes();
-            for(CEDASUpload cu : cedasData){
-                Wifi f = new Wifi(cu.getWapID(), "undefined", cu.getAirportCode(), cu.getUploadLocation(), cu.getWapStrength());
-                connection.save(f);
+            for(CEDASUpload cu : cedasData) {
+                Wifi w = new Wifi();
+                w.airportCode = cu.getAirportCode();
+                w.ssid = cu.getWapID();
+                w.latLong = cu.getUploadLocation();
+                w.password = "fakePassword";
+                w.range = (10f - Float.parseFloat(cu.getWapStrength())) / 10 * 90;
+                connection.save(w);
                 connection.save(cu);
             }
 

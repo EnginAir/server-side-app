@@ -22,6 +22,7 @@ package edu.nau.enginair;/*
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import com.mongodb.DuplicateKeyException;
 import dev.morphia.Datastore;
 import dev.morphia.geo.GeoJson;
 import dev.morphia.query.FindOptions;
@@ -50,25 +51,30 @@ public class Correlator {
                 .match(q)
                 .group("tailNumber")
                 .aggregate(AggregatedTailNumber.class);
+        Set<String> meme = new HashSet<>();
         while (tails.hasNext()) {
-            processTail(tails.next());
+            meme.add(tails.next()._id);
+        }
+        int i = 0;
+        for (String s : meme) {
+            processTail(s);
+            i++;
         }
         return 0;
     }
 
-    private void processTail(AggregatedTailNumber item) {
-        String tailNum = item._id; //we only get this out of the aggregation
-        Iterator<ADSBData> data = this.connection.createQuery(ADSBData.class)
-                .filter("tailNumber", tailNum)
-                .filter("processed", false)
-                .order(Sort.ascending("PosTime"))
-                .find();
+    private void processTail(String tailNum) {
+        Query<ADSBData> q = this.connection.createQuery(ADSBData.class)
+                .field("tailNumber").equalIgnoreCase(tailNum)
+                .field("processed").equal(false)
+                .order(Sort.ascending("PosTime"));
+        Iterator<ADSBData> data = q.find();
         ADSBData previous = null, current;
         List<CorrellatedFlight> flights = new ArrayList<>();
         CorrellatedFlight currentFlight = null;
         while (data.hasNext()) {
             current = data.next();
-            if (shouldBeNewFlight(previous, current)) {
+            if (shouldBeNewFlight(previous, current) || !data.hasNext()) {
                 if (currentFlight != null) {
                     if (isLandingSituation(previous)) {
                         currentFlight.setLandingDate(previous.PosTime);
@@ -77,15 +83,20 @@ public class Correlator {
                         System.out.println("Location was not a landing disposition! Not setting a landing point!");
                         currentFlight.setOutcome(FlightOutcome.WARN_IN_PROGRESS);
                     }
-                    flights.add(currentFlight);
-                    this.connection.save(currentFlight);
                 }
-                currentFlight = new CorrellatedFlight();
-                currentFlight.getFlightPath().add(current.location);
-                currentFlight.setTakeoffPoint(current.location);
-                currentFlight.setTailNumber(current.tailNumber);
+                if (data.hasNext()) {
+                    currentFlight = new CorrellatedFlight();
+                    currentFlight.getFlightPath().add(current.location);
+                    currentFlight.setTakeoffPoint(current.location);
+                    currentFlight.setTailNumber(current.tailNumber);
+                    currentFlight.setLastAltitude(current.altitude);
+                    currentFlight.setLastPing(current.PosTime);
+                    flights.add(currentFlight);
+                }
             } else {
                 currentFlight.getFlightPath().add(current.location);
+                currentFlight.setLastAltitude(current.altitude);
+                currentFlight.setLastPing(current.PosTime);
             }
             previous = current;
         }
@@ -95,7 +106,9 @@ public class Correlator {
     private void correlate(List<CorrellatedFlight> flights) {
         for (CorrellatedFlight flight : flights) {
             if (flight.getLandingPoint() == null && flight.getOutcome() != FlightOutcome.WARN_IN_PROGRESS) {
-                flight.setOutcome(FlightOutcome.FAIL_NO_LANDING);
+                flight.setOutcome(FlightOutcome.WARN_IN_PROGRESS);
+            } else if (flight.getOutcome() == FlightOutcome.WARN_IN_PROGRESS) {
+                //intentionally blank
             } else {
                 Query<CEDASUpload> hasUpload = connection.createQuery(CEDASUpload.class)
                         .field("tailNumber").equalIgnoreCase(flight.getTailNumber())
@@ -133,7 +146,12 @@ public class Correlator {
                     flight.setOutcome(FlightOutcome.SUCCESS_UPLOAD);
                 }
             }
-            connection.save(flight);
+            connection.ensureIndexes();
+            try {
+                connection.save(flight);
+            } catch (DuplicateKeyException e) {
+                System.out.println("Ignored duplicated correlated flight: " + flight.getTailNumber() + " : " + flight.getOutcome());
+            }
         }
     }
 
@@ -141,8 +159,8 @@ public class Correlator {
         if (previous == null) {
             return true;
         }
-        //If we lose tracking for more than 1 hour, we can be pretty sure they landed
-        if (current.PosTime.getTime() - previous.PosTime.getTime() > 1000 * 60 * 60) {
+        //If we lose tracking for more than 2 hours, we can be pretty sure they landed
+        if (current.PosTime.getTime() - previous.PosTime.getTime() > 1000 * 60 * 120) {
             assert current.altitude < 2000 && previous.altitude < 2000;
             return true;
         }
@@ -150,6 +168,6 @@ public class Correlator {
     }
 
     private boolean isLandingSituation(ADSBData data) {
-        return data.altitude < 3000 && data.speed < 300;
+        return data.altitude < 6000 && data.speed < 300;
     }
 }

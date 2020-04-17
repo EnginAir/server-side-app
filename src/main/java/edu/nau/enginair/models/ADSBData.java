@@ -12,10 +12,19 @@
 
 package edu.nau.enginair.models;
 
+import dev.morphia.annotations.*;
+import org.bson.types.ObjectId;
+
 import java.util.Date;
 
+@Entity
+@Indexes({
+        @Index(fields = {@Field("PosTime"), @Field("tailNumber")},
+                options = @IndexOptions(unique = true))
+})
 public class ADSBData {
-
+    @Id
+    public ObjectId id;
     public String tailNumber;
     public LatLong location;
     public Float altitude;
