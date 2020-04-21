@@ -90,6 +90,11 @@
             <version>1.18.12</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.see-es-vee</groupId>
+            <artifactId>see-es-vee</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -35,7 +35,10 @@ public class AppEngine {
         AppEngine ae = new AppEngine();
         HashMap<String, String> parsedArgs = parseArgs(args);
         ae.execute(parsedArgs);
-
+        /*
+        "gennaro
+        napolitano", something else, hi
+         */
     }
 
 
@@ -50,6 +53,8 @@ public class AppEngine {
         options.addOption(new Option("c", "importCEDAS", true, "Imports CEDAS Upload info"));
         options.addOption(new Option("d", "dataBaseName", true, "Name of Mongo Database to Import to"));
         options.addOption(new Option("C", "runCorrelator", false, "run corellator"));
+        options.addOption(new Option("A", "importAirports", false, "imports airport datas to the mongoDB"));
+
 
         // create the parser
         CommandLineParser parser = new DefaultParser();

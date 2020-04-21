@@ -16,10 +16,7 @@ import com.mongodb.MongoClient;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
 import edu.nau.enginair.Correlator;
-import edu.nau.enginair.importers.ADSBImporter;
-import edu.nau.enginair.importers.CEDASImporter;
-import edu.nau.enginair.importers.Importer;
-import edu.nau.enginair.importers.TailImporter;
+import edu.nau.enginair.importers.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -65,7 +62,9 @@ public class ImportExecutor {
         if(arg.equals("importTails")){
             return new TailImporter(config, datastore);
         }
-
+        if(arg.equals("importAirports")){
+            return new AirportImporter(config, datastore);
+        }
         return null;
     }
 
