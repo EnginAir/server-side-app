@@ -26,7 +26,8 @@ import java.util.List;
 @Entity
 @Indexes({
         @Index(fields = {@Field("tailNumber"), @Field(value = "takeoffPoint.geometry", type = IndexType.GEO2DSPHERE)},
-                options = @IndexOptions(unique = true))
+                options = @IndexOptions(unique = true)),
+        @Index(fields = {@Field(value = "landingPoint.geometry", type = IndexType.GEO2DSPHERE)})
 })
 public class CorrellatedFlight {
     @Getter

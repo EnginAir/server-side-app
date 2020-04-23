@@ -12,11 +12,8 @@
 
 package edu.nau.enginair.models;
 
-import dev.morphia.annotations.Indexed;
-
 public class LatLong {
     private String type = "Point";
-    @Indexed()
     private Float[] geometry = new Float[]{0f, 0f};
 
     public LatLong(Float latitude, Float longitude) {
