@@ -5,3 +5,6 @@ target
 */.DS_Store
 /ADSBDownload/
 dependency-reduced-pom.xml
+/Airports
+*.log
+.env

@@ -1,4 +1,4 @@
-FROM maven:3-jdk-8 AS build
+FROM maven:3-jdk-11-slim AS build
 
 WORKDIR /app/build
 
@@ -16,7 +16,7 @@ RUN [ "cp", "build/bootstrap.sh", "./" ]
 
 RUN [ "rm", "-rf", "build" ]
 
-FROM openjdk:8-alpine
+FROM openjdk:12-alpine
 
 WORKDIR /app
 
